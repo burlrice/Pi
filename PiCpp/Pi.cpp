@@ -4,12 +4,12 @@
 #include <msclr/marshal_cppstd.h>
 
 using namespace Demo;
+using namespace msclr::interop;
+using namespace System;
 
-// https://www.facebook.com/photo/?fbid=2743885709090652&set=gm.4784083801612572
-
-System::String^ Pi::Generate(unsigned int digits)
+String^ Pi::Generate(unsigned int digits)
 {
-    int a = 10000, b, c = 8400, d, e, f[8401], g;
+    int a = 10000, b = 0, c = 8400, d = 0, e = 0, f[8401], g;
     std::string s;
 
     for (; b - c && b < std::size(f); )
@@ -29,5 +29,5 @@ System::String^ Pi::Generate(unsigned int digits)
         }
     }
 
-    return msclr::interop::marshal_as<System::String^>("3." + s.substr(0, digits));
+    return marshal_as<String^>("3." + s.substr(0, digits));
 }
