@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Pi": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
