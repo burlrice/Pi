@@ -58,6 +58,56 @@ Dictionary<String^, List<String^>^>^ FreeType::Fonts::get()
 	return fonts;
 }
 
+static auto CountBits(FT_Bitmap bitmap)
+{
+	size_t result = 0;
+
+	for (unsigned int y = 0; y < bitmap.rows; y++)
+	{
+		const auto* src = &bitmap.buffer[y * bitmap.pitch];
+
+		for (int x = 0; x < bitmap.pitch; x++)
+		{
+			result += std::bitset<8>(src[x]).count();
+		}
+	}
+
+	return result;
+}
+
+static auto Render(FT_Bitmap bitmap, const std::string& chars)
+{
+	std::vector<std::string> result;
+	std::string s = chars;
+
+	for (unsigned int y = 0; y < bitmap.rows; y++)
+	{
+		const auto* src = &bitmap.buffer[y * bitmap.pitch];
+		std::string line;
+
+		for (int x = 0; x < bitmap.pitch; x++)
+		{
+			std::bitset<8> bits(src[x]);
+
+			for (int i = 7; i >= 0; i--)
+			{
+				if (bits[i])
+				{
+					line += *s.begin();
+					s.erase(0, 1);
+				}
+				else
+				{
+					line += ' ';
+				}
+			}
+		}
+
+		result.push_back(line);
+	}
+
+	return result;
+}
 
 String^ FreeType::RenderChar(String^ family, String^ style, int height, String^ c)
 {
@@ -79,50 +129,14 @@ String^ FreeType::RenderChar(String^ family, String^ style, int height, String^ 
 
 			if (auto glyphIndex = FT_Get_Char_Index(*face.get(), charcode))
 			{
-				size_t bitsOn = 0;
-				std::string result;
-
 				FT_Load_Glyph(*face.get(), glyphIndex, FT_LOAD_DEFAULT);
 				FT_GlyphSlot slot = (*face)->glyph;
 				FT_Render_Glyph((*face)->glyph, FT_RENDER_MODE_MONO);
 
-				for (unsigned int y = 0; y < slot->bitmap.rows; y++)
-				{
-					const auto* src = &slot->bitmap.buffer[y * slot->bitmap.pitch];
-
-					for (int x = 0; x < slot->bitmap.pitch; x++)
-					{
-						std::bitset<8> bits (src[x]);
-						bitsOn += bits.count();
-					}
-				}
-
+				auto bitsOn = CountBits(slot->bitmap);
 				auto pi = marshal_as<std::string>(Pi::Generate((int)bitsOn));
-
-				for (unsigned int y = 0; y < slot->bitmap.rows; y++)
-				{
-					const auto* src = &slot->bitmap.buffer[y * slot->bitmap.pitch];
-
-					for (int x = 0; x < slot->bitmap.pitch; x++)
-					{
-						std::bitset<8> bits(src[x]);
-
-						for (int i = 7; i >= 0; i--)
-						{
-							if (bits[i])
-							{
-								result += *pi.begin();
-								pi.erase(0, 1);
-							}
-							else
-							{
-								result += ' ';
-							}
-						}
-					}
-
-					result += "\n";
-				}
+				auto lines = Render(slot->bitmap, pi);
+				std::string result = std::accumulate(lines.begin(), lines.end(), std::string(), [](auto& sum, auto i) { return sum + i + "\n"; });
 
 				return marshal_as<String^>(result);
 			}
