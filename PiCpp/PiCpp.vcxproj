@@ -82,8 +82,8 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>freetype.lib;FreeImaged.lib;FreeImagePlusd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)freetype2\objs\$(Platform)\$(Configuration);$(ProjectDir)freeimage\Dist\$(Platform);$(ProjectDir)freeimage\Wrapper\FreeImagePlus\dist\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)freetype2\objs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -112,8 +112,8 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>freetype.dll</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)freetype2\objs\$(Platform)\$(Configuration);$(ProjectDir)freeimage\Dist\$(Platform);$(ProjectDir)freeimage\Wrapper\FreeImagePlus\dist\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)freetype2\objs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
